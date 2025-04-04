@@ -15,5 +15,6 @@ class NewsItemDbModel(
     val urlToImage: String,
     val publishedAt: String,
     val content: String,
-    val category: String
+    val category: String,
+    val favourite: Boolean = false
 )

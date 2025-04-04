@@ -15,6 +15,12 @@ interface NewsDao {
     @Query("SELECT * FROM news WHERE category == :category")
     fun getNewsByCategory(category: String): Flow<List<NewsItemDbModel>>
 
+    @Query("SELECT * FROM news WHERE id == :id")
+    suspend fun getNewsFromBdById(id: Int): NewsItemDbModel
+
+    @Query("UPDATE news SET favourite = :isFavourite WHERE id == :id")
+    suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean)
+
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun saveAllNews(newsList: List<NewsItemDbModel>)
 }
