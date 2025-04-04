@@ -33,7 +33,8 @@ internal fun NewsItemDbModel.mapToDomainNewsItem(): NewsItem {
         urlToImage = this.urlToImage,
         publishedAt = this.publishedAt,
         content = this.content,
-        category = this.category
+        category = this.category,
+        favourite = this.favourite
     )
     return newsItem
 }

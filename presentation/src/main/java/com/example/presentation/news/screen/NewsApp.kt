@@ -35,29 +35,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.core.R
-import com.example.domain.news.model.NewsItem
 import com.example.presentation.news.state.NewsScreenState
-import com.example.presentation.news.viewmodel.NewsViewModule
+import com.example.presentation.news.viewmodel.NewsViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
 object NewsApp
 
-fun NavGraphBuilder.newsAppDestination() {
+fun NavGraphBuilder.newsAppDestination(navController: NavHostController) {
     composable<NewsApp> {
-        NewsApp()
+        NewsApp(
+            onNavigateToNewsItemScreen = {
+                navController.navigate(route = NewsItemScreenRoute(it))
+            }
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsApp(
-    viewModule: NewsViewModule = hiltViewModel()
+    viewModule: NewsViewModel = hiltViewModel(),
+    onNavigateToNewsItemScreen: (Int) -> Unit
 ) {
     val news = viewModule.newsState.collectAsState()
     var isRefreshing = viewModule.isRefreshing.collectAsState()
@@ -80,7 +85,7 @@ fun NewsApp(
                                 imageUrl = news.urlToImage,
                                 description = news.description,
                                 onClickCard = {
-                                    viewModule.loadNewsById(news)
+                                    onNavigateToNewsItemScreen(news.id)
                                 }
                             )
                         }
@@ -162,13 +167,13 @@ fun NewsCard(
     title: String,
     imageUrl: String,
     description: String,
-    onClickCard: (NewsItem) -> Unit
+    onClickCard: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .padding(10.dp, 5.dp)
             .clickable(onClick = {
-
+                onClickCard()
             })
     ) {
         Column(

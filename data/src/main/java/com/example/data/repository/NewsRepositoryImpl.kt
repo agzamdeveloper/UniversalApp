@@ -32,6 +32,14 @@ class NewsRepositoryImpl @Inject constructor(
         return listOfNewsItem
     }
 
+    override suspend fun loadNewsFromDbById(id: Int): NewsItem {
+        return newsDao.getNewsFromBdById(id).mapToDomainNewsItem()
+    }
+
+    override suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean) {
+        newsDao.changeFavouriteStatus(id, isFavourite)
+    }
+
     override suspend fun saveNewsInDbByCategory(category: String) {
         val listOfNewsItemDbModel = apiService
             .loadAllNewsByCategory(category = category)
