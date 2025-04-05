@@ -36,6 +36,15 @@ class NewsRepositoryImpl @Inject constructor(
         return newsDao.getNewsFromBdById(id).mapToDomainNewsItem()
     }
 
+    override suspend fun loadFavouriteNewsFromBd(): List<NewsItem> {
+        val listOfNewsItem = mutableListOf<NewsItem>()
+        val listOfNewsItemDbModel = newsDao.getFavouriteNewsFromBd().first()
+        for (item in listOfNewsItemDbModel) {
+            listOfNewsItem.add(item.mapToDomainNewsItem())
+        }
+        return listOfNewsItem
+    }
+
     override suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean) {
         newsDao.changeFavouriteStatus(id, isFavourite)
     }

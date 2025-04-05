@@ -45,7 +45,7 @@ fun NewsItemScreen(
     viewModule.loadNewsFromDbById(id)
 
     when (val currentState = newsItemState.value) {
-        is NewsItemScreenState.NewsItemLoaded -> {
+        is NewsItemScreenState.NewsItemSucceeded -> {
             NewsDetailsScreen(
                 newsItem = currentState.newsItem,
                 onClickSaveInFavouritesButton = {

@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.news.model.NewsItem
 import com.example.domain.news.usecases.ChangeFavouriteStatusUseCase
 import com.example.domain.news.usecases.LoadAllNewsFromDbUseCase
+import com.example.domain.news.usecases.LoadFavouriteNewsFromBdUseCase
 import com.example.domain.news.usecases.LoadNewsFromDbByCategoryUseCase
 import com.example.domain.news.usecases.LoadNewsFromDbByIdUseCase
 import com.example.domain.news.usecases.SaveNewsInDbByCategoryUseCase
 import com.example.domain.settings.usecases.CheckInternetConnectionUseCase
+import com.example.presentation.news.state.FavouriteNewsScreenState
 import com.example.presentation.news.state.NewsItemScreenState
 import com.example.presentation.news.state.NewsScreenState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +26,7 @@ class NewsViewModel @Inject constructor(
     private val loadAllNewsFromDbUseCase: LoadAllNewsFromDbUseCase,
     private val loadNewsFromDbByCategoryUseCase: LoadNewsFromDbByCategoryUseCase,
     private val loadNewsFromDbByIdUseCase: LoadNewsFromDbByIdUseCase,
+    private val loadFavouriteNewsFromBdUseCase: LoadFavouriteNewsFromBdUseCase,
     private val changeFavouriteStatusUseCase: ChangeFavouriteStatusUseCase,
     private val saveNewsInDbByCategoryUseCase: SaveNewsInDbByCategoryUseCase
 ) : ViewModel() {
@@ -34,6 +37,10 @@ class NewsViewModel @Inject constructor(
     private val _newsItemState =
         MutableStateFlow<NewsItemScreenState>(NewsItemScreenState.NewsItemInitial)
     val newsItemState: StateFlow<NewsItemScreenState> = _newsItemState.asStateFlow()
+
+    private val _favoriteNewsState =
+        MutableStateFlow<FavouriteNewsScreenState>(FavouriteNewsScreenState.FavouriteNewsInitial)
+    val favouriteNewsState: StateFlow<FavouriteNewsScreenState> = _favoriteNewsState.asStateFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -60,8 +67,8 @@ class NewsViewModel @Inject constructor(
 
     fun loadAllNewsFromDb() {
         viewModelScope.launch {
-            val newsItemList = loadAllNewsFromDbUseCase()
-            _newsState.value = NewsScreenState.NewsStateSucceeded(data = newsItemList)
+            val news = loadAllNewsFromDbUseCase()
+            _newsState.value = NewsScreenState.NewsStateSucceeded(data = news)
         }
     }
 
@@ -76,13 +83,22 @@ class NewsViewModel @Inject constructor(
     fun loadNewsFromDbById(id: Int) {
         viewModelScope.launch {
             val newsItem = loadNewsFromDbByIdUseCase(id)
-            _newsItemState.value = NewsItemScreenState.NewsItemLoaded(newsItem)
+            _newsItemState.value = NewsItemScreenState.NewsItemSucceeded(newsItem)
+        }
+    }
+
+    fun loadFavouriteNews(){
+        viewModelScope.launch {
+            val news = loadFavouriteNewsFromBdUseCase()
+            _favoriteNewsState.value = FavouriteNewsScreenState.FavouriteNewsSucceeded(data = news)
         }
     }
 
     fun changeFavouriteStatusOfNewsItem(newsItem: NewsItem){
         viewModelScope.launch {
-            _newsItemState.value = NewsItemScreenState.NewsItemLoaded(newsItem.copy(favourite = !newsItem.favourite))
+            _newsItemState.value =
+                NewsItemScreenState.NewsItemSucceeded(newsItem.copy(favourite = !newsItem.favourite))
+
             changeFavouriteStatusUseCase(newsItem.id, !newsItem.favourite)
         }
     }

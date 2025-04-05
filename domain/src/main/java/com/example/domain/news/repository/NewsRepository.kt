@@ -11,6 +11,8 @@ interface NewsRepository {
 
     suspend fun loadNewsFromDbById(id: Int): NewsItem
 
+    suspend fun loadFavouriteNewsFromBd(): List<NewsItem>
+
     suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean)
 
     suspend fun saveNewsInDbByCategory(category: String)

@@ -18,6 +18,9 @@ interface NewsDao {
     @Query("SELECT * FROM news WHERE id == :id")
     suspend fun getNewsFromBdById(id: Int): NewsItemDbModel
 
+    @Query("SELECT * FROM news WHERE favourite == true")
+    fun getFavouriteNewsFromBd(): Flow<List<NewsItemDbModel>>
+
     @Query("UPDATE news SET favourite = :isFavourite WHERE id == :id")
     suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean)
 

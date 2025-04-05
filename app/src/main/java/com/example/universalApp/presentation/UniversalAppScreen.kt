@@ -27,7 +27,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.presentation.news.NewsAppRoute
 import com.example.presentation.news.newsAppHomeNavigationDestination
+import com.example.presentation.news.newsAppNavigationDestination
 import com.example.presentation.news.screen.NewsApp
 import com.example.presentation.news.screen.newsAppDestination
 import com.example.presentation.stopwatch.screen.StopwatchApp
@@ -48,7 +50,7 @@ fun UniversalAppScreen() {
         universalAppDestination(navController)
         stopwatchAppDestination(navController)
         weatherAppDestination(navController)
-        newsAppHomeNavigationDestination(navController)
+        newsAppNavigationDestination()
     }
 }
 
@@ -66,7 +68,7 @@ fun NavGraphBuilder.universalAppDestination(navHostController: NavHostController
                 navHostController.navigate(route = WeatherApp)
             },
             onNewsAppClick = {
-                navHostController.navigate(route = NewsApp)
+                navHostController.navigate(route = NewsAppRoute)
             }
         )
     }
