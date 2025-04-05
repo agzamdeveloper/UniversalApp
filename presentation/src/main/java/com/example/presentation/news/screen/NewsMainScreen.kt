@@ -1,4 +1,4 @@
-package com.example.presentation.news
+package com.example.presentation.news.screen
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -18,48 +18,23 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.presentation.news.screen.FavouriteNewsScreenRoute
-import com.example.presentation.news.screen.NewsApp
-import com.example.presentation.news.screen.favouriteNewsScreenDestination
-import com.example.presentation.news.screen.newsAppDestination
-import com.example.presentation.news.screen.newsItemDestination
-import kotlinx.serialization.Serializable
-
-@Serializable
-object NewsAppHome
-
-fun NavGraphBuilder.newsAppHomeNavigationDestination(navController: NavHostController){
-    navigation<NewsAppHome>(startDestination = NewsApp) {
-        newsAppDestination(navController)
-        newsItemDestination()
-    }
-}
+import com.example.presentation.news.navigation.FavouriteNewsScreenRoute
+import com.example.presentation.news.navigation.NewsHomeScreenRoute
+import com.example.presentation.news.navigation.favouriteNewsScreenDestination
+import com.example.presentation.news.navigation.newsHomeScreenDestination
 
 data class TopLevelRoute<T : Any>(val name: String, val route: T, val icon: ImageVector)
 
 val topLevelRoutes = listOf(
-    TopLevelRoute("Home", NewsAppHome, Icons.Default.Home),
+    TopLevelRoute("Home", NewsHomeScreenRoute, Icons.Default.Home),
     TopLevelRoute("Favourites", FavouriteNewsScreenRoute, Icons.Default.Info)
 )
 
-@Serializable
-object NewsAppRoute
-
-fun NavGraphBuilder.newsAppNavigationDestination(){
-    composable<NewsAppRoute> {
-        NewsApp()
-    }
-}
-
 @Composable
-fun NewsApp() {
+fun NewsMainScreen() {
     val navController = rememberNavController()
 
     Scaffold(
@@ -102,10 +77,10 @@ fun NewsApp() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NewsAppHome,
+            startDestination = NewsHomeScreenRoute,
             modifier = Modifier.padding(innerPadding)
         ) {
-            newsAppHomeNavigationDestination(navController)
+            newsHomeScreenDestination(navController)
             favouriteNewsScreenDestination()
         }
     }

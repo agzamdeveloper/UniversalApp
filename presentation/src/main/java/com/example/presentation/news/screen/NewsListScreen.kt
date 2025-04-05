@@ -34,33 +34,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.core.R
 import com.example.presentation.news.state.NewsScreenState
 import com.example.presentation.news.viewmodel.NewsViewModel
-import kotlinx.serialization.Serializable
-
-@Serializable
-object NewsApp
-
-fun NavGraphBuilder.newsAppDestination(navController: NavHostController) {
-    composable<NewsApp> {
-        NewsApp(
-            onNavigateToNewsItemScreen = {
-                navController.navigate(route = NewsItemScreenRoute(it))
-            }
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsApp(
+fun NewsListScreen(
     viewModule: NewsViewModel = hiltViewModel(),
     onNavigateToNewsItemScreen: (Int) -> Unit
 ) {
@@ -70,7 +53,7 @@ fun NewsApp(
     when (val currentState = news.value) {
         is NewsScreenState.NewsStateSucceeded -> {
             Column {
-                NewsTop(
+                NewsListTop(
                     onClickAllNews = { viewModule.loadAllNewsFromDb() },
                     onClickDropdownItem = { viewModule.loadNewsByCategory(it) }
                 )
@@ -80,7 +63,7 @@ fun NewsApp(
                 ) {
                     LazyColumn {
                         items(currentState.data) { news ->
-                            NewsCard(
+                            NewsListCard(
                                 title = news.title,
                                 imageUrl = news.urlToImage,
                                 description = news.description,
@@ -109,7 +92,7 @@ fun NewsApp(
 }
 
 @Composable
-fun NewsTop(
+fun NewsListTop(
     onClickAllNews: () -> Unit,
     onClickDropdownItem: (String) -> Unit
 ) {
@@ -163,7 +146,7 @@ fun NewsTop(
 }
 
 @Composable
-fun NewsCard(
+fun NewsListCard(
     title: String,
     imageUrl: String,
     description: String,

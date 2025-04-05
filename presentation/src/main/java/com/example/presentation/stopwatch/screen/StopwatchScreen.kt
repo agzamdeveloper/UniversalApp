@@ -43,24 +43,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
 import com.example.core.R
 import com.example.presentation.stopwatch.viewmodel.StopwatchViewModel
-import kotlinx.serialization.Serializable
-
-@Serializable
-object StopwatchApp
-
-fun NavGraphBuilder.stopwatchAppDestination(navHostController: NavHostController) {
-    composable<StopwatchApp> {
-        StopwatchApp(navigateBack = { navHostController.popBackStack() })
-    }
-}
 
 @Composable
-fun StopwatchApp(
+fun StopwatchMainScreen(
     navigateBack: () -> Unit,
     stopwatchViewModel: StopwatchViewModel = hiltViewModel()
 ) {
@@ -69,7 +56,7 @@ fun StopwatchApp(
     val firstStart = stopwatchViewModel.firstStart.collectAsState()
     val lapsList = stopwatchViewModel.laps.collectAsState()
 
-    StopwatchScreen(
+    StopwatchContentScreen(
         time = time.value,
         lapsList = lapsList.value,
         isStarted = isStarted.value,
@@ -84,7 +71,7 @@ fun StopwatchApp(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StopwatchScreen(
+fun StopwatchContentScreen(
     time: String,
     lapsList: List<String>,
     isStarted: Boolean,

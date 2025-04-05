@@ -14,9 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -24,20 +21,9 @@ import com.example.core.R
 import com.example.domain.news.model.NewsItem
 import com.example.presentation.news.state.NewsItemScreenState
 import com.example.presentation.news.viewmodel.NewsViewModel
-import kotlinx.serialization.Serializable
-
-@Serializable
-internal data class NewsItemScreenRoute(val id: Int)
-
-fun NavGraphBuilder.newsItemDestination() {
-    composable<NewsItemScreenRoute> {
-        val route = it.toRoute<NewsItemScreenRoute>()
-        NewsItemScreen(route.id)
-    }
-}
 
 @Composable
-fun NewsItemScreen(
+fun NewsDetailsScreen(
     id: Int,
     viewModule: NewsViewModel = hiltViewModel()
 ) {
@@ -46,7 +32,7 @@ fun NewsItemScreen(
 
     when (val currentState = newsItemState.value) {
         is NewsItemScreenState.NewsItemSucceeded -> {
-            NewsDetailsScreen(
+            NewsDetailsContentScreen(
                 newsItem = currentState.newsItem,
                 onClickSaveInFavouritesButton = {
                     viewModule.changeFavouriteStatusOfNewsItem(currentState.newsItem)
@@ -61,7 +47,7 @@ fun NewsItemScreen(
 }
 
 @Composable
-fun NewsDetailsScreen(
+fun NewsDetailsContentScreen(
     newsItem: NewsItem,
     onClickSaveInFavouritesButton: () -> Unit
 ) {

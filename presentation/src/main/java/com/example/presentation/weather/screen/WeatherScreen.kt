@@ -36,13 +36,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
 import com.example.core.R
 import com.example.core.theme.backgroundLight
 import com.example.core.theme.onSurfaceVariantDark
@@ -50,19 +46,9 @@ import com.example.core.theme.outlineDark
 import com.example.core.theme.outlineVariantDark
 import com.example.presentation.weather.state.WeatherScreenState
 import com.example.presentation.weather.viewmodel.WeatherViewModel
-import kotlinx.serialization.Serializable
-
-@Serializable
-object WeatherApp
-
-fun NavGraphBuilder.weatherAppDestination(navHostController: NavHostController) {
-    composable<WeatherApp> {
-        WeatherApp(navigateBack = { navHostController.popBackStack() })
-    }
-}
 
 @Composable
-fun WeatherApp(
+fun WeatherMainScreen(
     navigateBack: () -> Unit,
     viewModel: WeatherViewModel = hiltViewModel()
 ) {
@@ -70,7 +56,7 @@ fun WeatherApp(
 
     when (val currentState = weatherState.value) {
         is WeatherScreenState.WeatherStateSucceeded -> {
-            WeatherScreen(
+            WeatherContentScreen(
                 temperature = currentState.temperature,
                 main = currentState.main,
                 description = currentState.description,
@@ -143,7 +129,7 @@ fun NotConnectionScreen(
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun WeatherScreen(
+fun WeatherContentScreen(
     temperature: Int,
     main: String,
     description: String,
@@ -341,27 +327,5 @@ fun ImageCard(
             else -> painterResource(R.drawable.mist1)
         },
         contentDescription = "weather icon"
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun WeatherAppPreview() {
-    WeatherScreen(
-        temperature = 25,
-        main = "Clouds",
-        description = "overcast clouds",
-        humidity = 18,
-        windSpeed = 34.7,
-        loadData = {},
-        navigateBack = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NotConnectionPreview() {
-    NotConnectionScreen(
-        {}, {}
     )
 }

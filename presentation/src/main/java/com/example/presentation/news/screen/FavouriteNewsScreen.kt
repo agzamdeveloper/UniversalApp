@@ -6,21 +6,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.compose.composable
 import com.example.presentation.news.state.FavouriteNewsScreenState
 import com.example.presentation.news.viewmodel.NewsViewModel
-import kotlinx.serialization.Serializable
-
-
-@Serializable
-object FavouriteNewsScreenRoute
-
-fun NavGraphBuilder.favouriteNewsScreenDestination() {
-    composable<FavouriteNewsScreenRoute> {
-        FavouriteNewsScreen()
-    }
-}
 
 @Composable
 fun FavouriteNewsScreen(
@@ -33,7 +20,7 @@ fun FavouriteNewsScreen(
         is FavouriteNewsScreenState.FavouriteNewsSucceeded -> {
             LazyColumn {
                 items(currentState.data) { news ->
-                    NewsCard(
+                    NewsListCard(
                         title = news.title,
                         imageUrl = news.urlToImage,
                         description = news.description,

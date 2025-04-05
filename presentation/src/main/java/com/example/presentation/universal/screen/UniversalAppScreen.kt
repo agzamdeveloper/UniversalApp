@@ -1,4 +1,4 @@
-package com.example.universalApp.presentation
+package com.example.presentation.universal.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,61 +22,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.presentation.news.NewsAppRoute
-import com.example.presentation.news.newsAppHomeNavigationDestination
-import com.example.presentation.news.newsAppNavigationDestination
-import com.example.presentation.news.screen.NewsApp
-import com.example.presentation.news.screen.newsAppDestination
-import com.example.presentation.stopwatch.screen.StopwatchApp
-import com.example.presentation.stopwatch.screen.stopwatchAppDestination
-import com.example.presentation.weather.screen.WeatherApp
-import com.example.presentation.weather.screen.weatherAppDestination
+import com.example.presentation.news.navigation.newsMainScreenDestination
+import com.example.presentation.stopwatch.navigation.stopwatchScreenDestination
+import com.example.presentation.universal.navigation.UniversalMainScreenRoute
+import com.example.presentation.universal.navigation.universalMainScreenDestination
+import com.example.presentation.weather.navigation.weatherScreenDestination
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
-
 
 @Composable
 fun UniversalAppScreen() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = UniversalAppScreen,
+        startDestination = UniversalMainScreenRoute,
     ) {
-        universalAppDestination(navController)
-        stopwatchAppDestination(navController)
-        weatherAppDestination(navController)
-        newsAppNavigationDestination()
-    }
-}
-
-
-@Serializable
-object UniversalAppScreen
-
-fun NavGraphBuilder.universalAppDestination(navHostController: NavHostController) {
-    composable<UniversalAppScreen> {
-        UniversalScreen(
-            onStopwatchClick = {
-                navHostController.navigate(route = StopwatchApp)
-            },
-            onWeatherAppClick = {
-                navHostController.navigate(route = WeatherApp)
-            },
-            onNewsAppClick = {
-                navHostController.navigate(route = NewsAppRoute)
-            }
-        )
+        universalMainScreenDestination(navController)
+        stopwatchScreenDestination(navController)
+        weatherScreenDestination(navController)
+        newsMainScreenDestination()
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UniversalScreen(
+fun UniversalMainScreen(
     onStopwatchClick: () -> Unit,
     onWeatherAppClick: () -> Unit,
     onNewsAppClick: () -> Unit
