@@ -38,6 +38,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.core.R
+import com.example.presentation.enums.Category
 import com.example.presentation.news.state.NewsScreenState
 import com.example.presentation.news.viewmodel.NewsViewModel
 
@@ -54,8 +55,7 @@ fun NewsListScreen(
         is NewsScreenState.NewsStateSucceeded -> {
             Column {
                 NewsListTop(
-                    onClickAllNews = { viewModule.loadAllNewsFromDb() },
-                    onClickDropdownItem = { viewModule.loadNewsByCategory(it) }
+                    onClickDropdownItem = { viewModule.loadNewsByCategoryFromDb(it) }
                 )
                 PullToRefreshBox(
                     isRefreshing = isRefreshing.value,
@@ -93,7 +93,6 @@ fun NewsListScreen(
 
 @Composable
 fun NewsListTop(
-    onClickAllNews: () -> Unit,
     onClickDropdownItem: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -113,34 +112,15 @@ fun NewsListTop(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            DropdownMenuItem(
-                text = { Text("All news") },
-                onClick = { onClickAllNews() }
-            )
-            DropdownMenuItem(
-                text = { Text("Business news") },
-                onClick = { onClickDropdownItem("business") }
-            )
-            DropdownMenuItem(
-                text = { Text("Entertainment news") },
-                onClick = { onClickDropdownItem("entertainment") }
-            )
-            DropdownMenuItem(
-                text = { Text("Health news") },
-                onClick = { onClickDropdownItem("health") }
-            )
-            DropdownMenuItem(
-                text = { Text("Science news") },
-                onClick = { onClickDropdownItem("science") }
-            )
-            DropdownMenuItem(
-                text = { Text("Sport news") },
-                onClick = { onClickDropdownItem("sports") }
-            )
-            DropdownMenuItem(
-                text = { Text("Technology news") },
-                onClick = { onClickDropdownItem("technology") }
-            )
+            for (category in Category.entries) {
+                DropdownMenuItem(
+                    text = { Text(category.value) },
+                    onClick = {
+                        expanded = !expanded
+                        onClickDropdownItem(category.value)
+                    }
+                )
+            }
         }
     }
 }

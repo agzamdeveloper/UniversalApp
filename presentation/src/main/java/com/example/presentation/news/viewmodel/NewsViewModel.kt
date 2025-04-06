@@ -10,6 +10,7 @@ import com.example.domain.news.usecases.LoadNewsFromDbByCategoryUseCase
 import com.example.domain.news.usecases.LoadNewsFromDbByIdUseCase
 import com.example.domain.news.usecases.SaveNewsInDbByCategoryUseCase
 import com.example.domain.settings.usecases.CheckInternetConnectionUseCase
+import com.example.presentation.enums.Category
 import com.example.presentation.news.state.FavouriteNewsScreenState
 import com.example.presentation.news.state.NewsItemScreenState
 import com.example.presentation.news.state.NewsScreenState
@@ -45,37 +46,34 @@ class NewsViewModel @Inject constructor(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-    private var categoryChange = "general"
-    private val categories =
-        arrayOf("business", "entertainment", "health", "science", "sports", "technology") // todo
-
     init {
-        //getNewsFromNetAndSaveInDb() //todo
         loadAllNewsFromDb()
     }
 
-    fun getNewsFromNetAndSaveInDb() {
-        _newsState.value = NewsScreenState.NewsStateLoading
-        viewModelScope.launch {
-            if (checkInternetConnectionUseCase()) {
-                for (category in categories) {
-                    saveNewsInDbByCategoryUseCase(category)
-                }
+    private suspend fun getNewsFromNetAndSaveInDb() {
+        if (checkInternetConnectionUseCase()) {
+            for (category in Category.entries) {
+                saveNewsInDbByCategoryUseCase(category.value)
             }
         }
     }
 
     fun loadAllNewsFromDb() {
+        _newsState.value = NewsScreenState.NewsStateLoading
         viewModelScope.launch {
+            getNewsFromNetAndSaveInDb()
             val news = loadAllNewsFromDbUseCase()
             _newsState.value = NewsScreenState.NewsStateSucceeded(data = news)
         }
     }
 
-    fun loadNewsByCategory(category: String) {
-        categoryChange = category
+    fun loadNewsByCategoryFromDb(category: String) {
         viewModelScope.launch {
-            val news = loadNewsFromDbByCategoryUseCase(category)
+            val news = if (category == Category.ALL_NEWS.value) {
+                loadAllNewsFromDbUseCase()
+            } else {
+                loadNewsFromDbByCategoryUseCase(category)
+            }
             _newsState.value = NewsScreenState.NewsStateSucceeded(data = news)
         }
     }
@@ -87,14 +85,14 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun loadFavouriteNews(){
+    fun loadFavouriteNews() {
         viewModelScope.launch {
             val news = loadFavouriteNewsFromBdUseCase()
             _favoriteNewsState.value = FavouriteNewsScreenState.FavouriteNewsSucceeded(data = news)
         }
     }
 
-    fun changeFavouriteStatusOfNewsItem(newsItem: NewsItem){
+    fun changeFavouriteStatusOfNewsItem(newsItem: NewsItem) {
         viewModelScope.launch {
             _newsItemState.value =
                 NewsItemScreenState.NewsItemSucceeded(newsItem.copy(favourite = !newsItem.favourite))
@@ -106,8 +104,7 @@ class NewsViewModel @Inject constructor(
     fun onPullToRefreshTrigger() {
         _isRefreshing.value = true
         viewModelScope.launch {
-            val news = loadNewsFromDbByCategoryUseCase(categoryChange)
-            _newsState.value = NewsScreenState.NewsStateSucceeded(data = news)
+            loadAllNewsFromDb()
             _isRefreshing.value = false
         }
     }
