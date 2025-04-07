@@ -11,7 +11,8 @@ import com.example.presentation.news.viewmodel.NewsViewModel
 
 @Composable
 fun FavouriteNewsScreen(
-    viewModel: NewsViewModel = hiltViewModel()
+    viewModel: NewsViewModel = hiltViewModel(),
+    onNavigateToNewsDetailsScreen: (Int) -> Unit
 ) {
     viewModel.loadFavouriteNews()
     val favouriteNews = viewModel.favouriteNewsState.collectAsState()
@@ -24,7 +25,7 @@ fun FavouriteNewsScreen(
                         title = news.title,
                         imageUrl = news.urlToImage,
                         description = news.description,
-                        onClickCard = {}
+                        onClickCard = {onNavigateToNewsDetailsScreen(news.id)}
                     )
                 }
             }

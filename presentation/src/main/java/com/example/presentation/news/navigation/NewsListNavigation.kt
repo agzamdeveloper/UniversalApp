@@ -12,7 +12,7 @@ object NewsListScreenRoute
 fun NavGraphBuilder.newsListScreenDestination(navController: NavHostController) {
     composable<NewsListScreenRoute> {
         NewsListScreen(
-            onNavigateToNewsItemScreen = {
+            onNavigateToNewsDetailsScreen = {
                 navController.navigate(route = NewsDetailsScreenRoute(it))
             }
         )

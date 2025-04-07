@@ -46,7 +46,7 @@ import com.example.presentation.news.viewmodel.NewsViewModel
 @Composable
 fun NewsListScreen(
     viewModule: NewsViewModel = hiltViewModel(),
-    onNavigateToNewsItemScreen: (Int) -> Unit
+    onNavigateToNewsDetailsScreen: (Int) -> Unit
 ) {
     val news = viewModule.newsState.collectAsState()
     var isRefreshing = viewModule.isRefreshing.collectAsState()
@@ -68,7 +68,7 @@ fun NewsListScreen(
                                 imageUrl = news.urlToImage,
                                 description = news.description,
                                 onClickCard = {
-                                    onNavigateToNewsItemScreen(news.id)
+                                    onNavigateToNewsDetailsScreen(news.id)
                                 }
                             )
                         }
