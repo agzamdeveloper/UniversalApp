@@ -6,7 +6,7 @@
             android:name="com.example.presentation.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Stopwatch">
+            android:theme="@style/Theme.UniversalAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

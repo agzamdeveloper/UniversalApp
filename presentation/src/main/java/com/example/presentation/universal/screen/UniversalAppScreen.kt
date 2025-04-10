@@ -3,6 +3,7 @@ package com.example.presentation.universal.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,16 +16,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.core.theme.UniversalAppTheme
 import com.example.presentation.news.navigation.newsMainScreenDestination
+import com.example.presentation.universal.viewmodel.SettingsViewModel
 import com.example.presentation.stopwatch.navigation.stopwatchScreenDestination
 import com.example.presentation.universal.navigation.UniversalMainScreenRoute
 import com.example.presentation.universal.navigation.universalMainScreenDestination
@@ -34,14 +41,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun UniversalAppScreen() {
     val navController = rememberNavController()
-    NavHost(
-        navController = navController,
-        startDestination = UniversalMainScreenRoute,
-    ) {
-        universalMainScreenDestination(navController)
-        stopwatchScreenDestination(navController)
-        weatherScreenDestination(navController)
-        newsMainScreenDestination()
+    val viewModel : SettingsViewModel = hiltViewModel()
+    val isDarkTheme = viewModel.isDarkThemeState.collectAsState(false)
+
+    UniversalAppTheme(darkTheme = isDarkTheme.value) {
+        NavHost(
+            navController = navController,
+            startDestination = UniversalMainScreenRoute,
+        ) {
+            universalMainScreenDestination(navController)
+            stopwatchScreenDestination(navController)
+            weatherScreenDestination(navController)
+            newsMainScreenDestination()
+        }
     }
 }
 
@@ -80,6 +92,8 @@ fun UniversalMainScreen(
                             text = "News app"
                         )
                     }
+                    Spacer(modifier = Modifier.weight(1f))
+                    UniversalAppSettings()
                 }
             }
         },
@@ -127,5 +141,28 @@ fun UniversalMainScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun UniversalAppSettings(
+    viewModel: SettingsViewModel = hiltViewModel()
+) {
+    var isDarkTheme = viewModel.isDarkThemeState.collectAsState(false)
+
+    Row(
+        modifier = Modifier.padding(20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = "Enable dark theme"
+        )
+        Switch(
+            checked = isDarkTheme.value,
+            onCheckedChange = {
+                viewModel.enableDarkTheme(it)
+            }
+        )
     }
 }

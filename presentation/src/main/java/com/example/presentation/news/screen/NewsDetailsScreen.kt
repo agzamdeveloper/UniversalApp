@@ -3,8 +3,15 @@ package com.example.presentation.news.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +32,7 @@ import com.example.presentation.news.viewmodel.NewsViewModel
 @Composable
 fun NewsDetailsScreen(
     id: Int,
+    navigateBack: () -> Unit,
     viewModule: NewsViewModel = hiltViewModel()
 ) {
     val newsItemState = viewModule.newsItemState.collectAsState()
@@ -36,6 +44,9 @@ fun NewsDetailsScreen(
                 newsItem = currentState.newsItem,
                 onClickSaveInFavouritesButton = {
                     viewModule.changeFavouriteStatusOfNewsItem(currentState.newsItem)
+                },
+                navigateBack = {
+                    navigateBack()
                 }
             )
         }
@@ -46,43 +57,62 @@ fun NewsDetailsScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsDetailsContentScreen(
     newsItem: NewsItem,
-    onClickSaveInFavouritesButton: () -> Unit
+    onClickSaveInFavouritesButton: () -> Unit,
+    navigateBack: () -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(top = 50.dp)
-    ) {
-        AsyncImage(
-            modifier = Modifier.size(100.dp),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(newsItem.urlToImage)
-                .crossfade(true)
-                .build(),
-            placeholder = painterResource(R.drawable.loading),
-            error = painterResource(R.drawable.error),
-            contentDescription = null
-        )
-        Text(
-            text = newsItem.content
-        )
-        Text(
-            text = newsItem.publishedAt
-        )
-        Text(
-            text = newsItem.source
-        )
-        Button(
-            onClick = {
-                onClickSaveInFavouritesButton()
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = if (newsItem.favourite) Color.DarkGray else Color.White,    // Фон кнопки
-                contentColor = if (newsItem.favourite) Color.White else Color.Black    // Цвет текста
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(text = "News details") },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Localized description"
+                        )
+                    }
+                }
             )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.padding(innerPadding)
         ) {
-            Text(text = "Save in database")
+            AsyncImage(
+                modifier = Modifier.size(100.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(newsItem.urlToImage)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.loading),
+                error = painterResource(R.drawable.error),
+                contentDescription = null
+            )
+            Text(
+                text = newsItem.content
+            )
+            Text(
+                text = newsItem.publishedAt
+            )
+            Text(
+                text = newsItem.source
+            )
+            Button(
+                onClick = {
+                    onClickSaveInFavouritesButton()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (newsItem.favourite) Color.DarkGray else Color.White,    // Фон кнопки
+                    contentColor = if (newsItem.favourite) Color.White else Color.Black    // Цвет текста
+                )
+            ) {
+                Text(text = "Save in database")
+            }
         }
     }
+
 }
