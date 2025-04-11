@@ -6,7 +6,10 @@ import com.example.data.mapper.mapToListNewsItemDbModel
 import com.example.data.network.service.NewsApiService
 import com.example.domain.news.model.NewsItem
 import com.example.domain.news.repository.NewsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
+import org.jsoup.Jsoup
 import javax.inject.Inject
 
 class NewsRepositoryImpl @Inject constructor(
@@ -55,5 +58,18 @@ class NewsRepositoryImpl @Inject constructor(
             .mapToListNewsItemDbModel(category)
 
         newsDao.saveAllNews(listOfNewsItemDbModel)
+    }
+
+    override suspend fun loadFullContentByUrl(url: String): String {
+        return withContext(Dispatchers.IO) {
+            try {
+                val doc = Jsoup.connect(url).get()
+                val text = doc.select("article").text()
+                text
+            } catch (e: Exception) {
+                e.printStackTrace()
+                "Failed to load article"
+            }
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.example.domain.news.repository
 
 import com.example.domain.news.model.NewsItem
-import kotlinx.coroutines.flow.Flow
 
 interface NewsRepository {
 
@@ -16,4 +15,6 @@ interface NewsRepository {
     suspend fun changeFavouriteStatus(id: Int, isFavourite: Boolean)
 
     suspend fun saveNewsInDbByCategory(category: String)
+
+    suspend fun loadFullContentByUrl(url: String): String
 }

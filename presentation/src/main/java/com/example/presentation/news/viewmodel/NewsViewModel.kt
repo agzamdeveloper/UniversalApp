@@ -6,6 +6,7 @@ import com.example.domain.news.model.NewsItem
 import com.example.domain.news.usecases.ChangeFavouriteStatusUseCase
 import com.example.domain.news.usecases.LoadAllNewsFromDbUseCase
 import com.example.domain.news.usecases.LoadFavouriteNewsFromBdUseCase
+import com.example.domain.news.usecases.LoadFullContentByUrlUseCase
 import com.example.domain.news.usecases.LoadNewsFromDbByCategoryUseCase
 import com.example.domain.news.usecases.LoadNewsFromDbByIdUseCase
 import com.example.domain.news.usecases.SaveNewsInDbByCategoryUseCase
@@ -29,7 +30,8 @@ class NewsViewModel @Inject constructor(
     private val loadNewsFromDbByIdUseCase: LoadNewsFromDbByIdUseCase,
     private val loadFavouriteNewsFromBdUseCase: LoadFavouriteNewsFromBdUseCase,
     private val changeFavouriteStatusUseCase: ChangeFavouriteStatusUseCase,
-    private val saveNewsInDbByCategoryUseCase: SaveNewsInDbByCategoryUseCase
+    private val saveNewsInDbByCategoryUseCase: SaveNewsInDbByCategoryUseCase,
+    private val loadFullContentByUrlUseCase: LoadFullContentByUrlUseCase
 ) : ViewModel() {
 
     private val _newsState = MutableStateFlow<NewsScreenState>(NewsScreenState.NewsStateFailure)
@@ -43,6 +45,12 @@ class NewsViewModel @Inject constructor(
         MutableStateFlow<FavouriteNewsScreenState>(FavouriteNewsScreenState.FavouriteNewsInitial)
     val favouriteNewsState: StateFlow<FavouriteNewsScreenState> = _favoriteNewsState.asStateFlow()
 
+    private val _fullContent = MutableStateFlow("Loading...")
+    val fullContent: StateFlow<String> = _fullContent.asStateFlow()
+
+    private val _isInternetConnected = MutableStateFlow(true)
+    val isInternetConnected: StateFlow<Boolean> = _isInternetConnected.asStateFlow()
+
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
@@ -52,9 +60,12 @@ class NewsViewModel @Inject constructor(
 
     private suspend fun getNewsFromNetAndSaveInDb() {
         if (checkInternetConnectionUseCase()) {
+            _isInternetConnected.value = true
             for (category in Category.entries) {
                 saveNewsInDbByCategoryUseCase(category.value)
             }
+        } else {
+            _isInternetConnected.value = false
         }
     }
 
@@ -98,6 +109,17 @@ class NewsViewModel @Inject constructor(
                 NewsItemScreenState.NewsItemSucceeded(newsItem.copy(favourite = !newsItem.favourite))
 
             changeFavouriteStatusUseCase(newsItem.id, !newsItem.favourite)
+        }
+    }
+
+    fun loadFullContentByUrl(url: String) {
+        viewModelScope.launch {
+            try {
+                val content = loadFullContentByUrlUseCase(url)
+                _fullContent.value = content
+            } catch (e: Exception) {
+                _fullContent.value = "Loading error"
+            }
         }
     }
 

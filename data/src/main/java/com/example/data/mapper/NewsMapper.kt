@@ -1,26 +1,12 @@
 package com.example.data.mapper
 
+import android.annotation.SuppressLint
 import com.example.data.local.model.NewsItemDbModel
 import com.example.data.network.model.news.NewsResponseDto
-import com.example.data.network.model.weather.WeatherResponseDto
 import com.example.domain.news.model.NewsItem
-import com.example.domain.weather.model.Weather
-
-internal fun WeatherResponseDto.mapResponseToDomainWeather(): Weather {
-    val temperature = this.main.temp
-    val humidity = this.main.humidity
-    val windSpeed = this.wind.speed
-    val main = this.weather.first().main
-    val description = this.weather.first().description
-
-    return Weather(
-        temperature = temperature.toInt(),
-        main = main,
-        description = description,
-        windSpeed = windSpeed,
-        humidity = humidity
-    )
-}
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 internal fun NewsItemDbModel.mapToDomainNewsItem(): NewsItem {
     val newsItem = NewsItem(
@@ -31,7 +17,7 @@ internal fun NewsItemDbModel.mapToDomainNewsItem(): NewsItem {
         description = this.description,
         url = this.url,
         urlToImage = this.urlToImage,
-        publishedAt = this.publishedAt,
+        publishedAt = formatDate(this.publishedAt),
         content = this.content,
         category = this.category,
         favourite = this.favourite
@@ -58,4 +44,11 @@ internal fun NewsResponseDto.mapToListNewsItemDbModel(category: String): List<Ne
     }
 
     return listOfNewItemDbModel
+}
+
+@SuppressLint("NewApi")
+private fun formatDate(isoDate: String): String {
+    val zonedDateTime = ZonedDateTime.parse(isoDate)
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+    return zonedDateTime.format(formatter)
 }
