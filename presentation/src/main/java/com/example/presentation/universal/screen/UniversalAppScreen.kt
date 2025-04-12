@@ -1,6 +1,7 @@
 package com.example.presentation.universal.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,17 +32,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.core.theme.UniversalAppTheme
 import com.example.presentation.news.navigation.newsMainScreenDestination
-import com.example.presentation.universal.viewmodel.SettingsViewModel
 import com.example.presentation.stopwatch.navigation.stopwatchScreenDestination
 import com.example.presentation.universal.navigation.UniversalMainScreenRoute
 import com.example.presentation.universal.navigation.universalMainScreenDestination
+import com.example.presentation.universal.viewmodel.SettingsViewModel
 import com.example.presentation.weather.navigation.weatherScreenDestination
 import kotlinx.coroutines.launch
 
 @Composable
 fun UniversalAppScreen() {
     val navController = rememberNavController()
-    val viewModel : SettingsViewModel = hiltViewModel()
+    val viewModel: SettingsViewModel = hiltViewModel()
     val isDarkTheme = viewModel.isDarkThemeState.collectAsState(false)
 
     UniversalAppTheme(darkTheme = isDarkTheme.value) {
@@ -119,11 +120,15 @@ fun UniversalMainScreen(
                                     contentDescription = "Localized description"
                                 )
                             }
-                            Text(
-                                text = "Universal app"
-                            )
+                            Box(
+                                modifier = Modifier.weight(1f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Universal app"
+                                )
+                            }
                         }
-
                     }
                 )
             }

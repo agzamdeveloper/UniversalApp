@@ -53,11 +53,15 @@ class NewsRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveNewsInDbByCategory(category: String) {
-        val listOfNewsItemDbModel = apiService
-            .loadAllNewsByCategory(category = category)
-            .mapToListNewsItemDbModel(category)
+        try {
+            val listOfNewsItemDbModel = apiService
+                .loadAllNewsByCategory(category = category)
+                .mapToListNewsItemDbModel(category)
 
-        newsDao.saveAllNews(listOfNewsItemDbModel)
+            newsDao.saveAllNews(listOfNewsItemDbModel)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override suspend fun loadFullContentByUrl(url: String): String {

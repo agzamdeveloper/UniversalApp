@@ -26,6 +26,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -80,10 +81,6 @@ fun NewsListScreen(
             )
         }
 
-        NewsScreenState.NewsStateFailure -> {
-
-        }
-
         NewsScreenState.NewsStateLoading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -106,6 +103,7 @@ fun NewsListContent(
     onRefresh: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(isInternetConnected) {
@@ -124,13 +122,13 @@ fun NewsListContent(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { contentPadding ->
-        Column(
-            modifier = Modifier.padding(contentPadding)
-        ) {
+
+        Column{
             NewsListTop(
                 onClickDropdownItem = { onClickDropdownItem(it) }
             )
             PullToRefreshBox(
+                state = pullToRefreshState,
                 isRefreshing = isRefreshing,
                 onRefresh = { onRefresh() }
             ) {

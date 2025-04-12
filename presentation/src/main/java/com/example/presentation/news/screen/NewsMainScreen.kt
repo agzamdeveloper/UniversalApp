@@ -68,11 +68,11 @@ fun NewsMainScreen() {
             }
 
         }
-    ) { innerPadding ->
+    ) { contentPadding ->
         NavHost(
             navController = navController,
             startDestination = NewsListScreenRoute,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(contentPadding)
         ) {
             newsListScreenDestination(navController)
             favouriteNewsScreenDestination(navController)

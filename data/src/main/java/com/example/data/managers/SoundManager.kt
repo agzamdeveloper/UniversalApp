@@ -6,7 +6,6 @@ import android.media.SoundPool
 import com.example.core.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class SoundManager @Inject constructor(@ApplicationContext context: Context) {
 
@@ -20,13 +19,13 @@ class SoundManager @Inject constructor(@ApplicationContext context: Context) {
         )
         .build()
 
-    private val soundId = soundPool.load(context, R.raw.tick,1)
+    private val soundId = soundPool.load(context, R.raw.tick, 1)
 
     fun playSound() {
         soundPool.play(soundId, 1f, 1f, 0, 0, 1f)
     }
 
-    private companion object{
+    private companion object {
         const val MAX_STREAMS = 5
     }
 }
