@@ -1,15 +1,19 @@
 package com.example.presentation.universal.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,6 +23,7 @@ import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -26,10 +31,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.core.R
 import com.example.core.theme.UniversalAppTheme
 import com.example.presentation.news.navigation.newsMainScreenDestination
 import com.example.presentation.stopwatch.navigation.stopwatchScreenDestination
@@ -63,38 +73,39 @@ fun UniversalAppScreen() {
 fun UniversalMainScreen(
     onStopwatchClick: () -> Unit,
     onWeatherAppClick: () -> Unit,
-    onNewsAppClick: () -> Unit
+    onNewsAppClick: () -> Unit,
+    viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val isDarkTheme = viewModel.isDarkThemeState.collectAsState(false)
     val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
+            ModalDrawerSheet(
+                modifier = Modifier.width(250.dp)
+            ) {
                 Column {
-                    Button(
-                        onClick = { onStopwatchClick() }
-                    ) {
-                        Text(
-                            text = "Stopwatch app"
-                        )
-                    }
-                    Button(
-                        onClick = { onWeatherAppClick() }
-                    ) {
-                        Text(
-                            text = "Weather app"
-                        )
-                    }
-                    Button(
-                        onClick = { onNewsAppClick() }
-                    ) {
-                        Text(
-                            text = "News app"
-                        )
-                    }
+                    NavigateTextButton(
+                        buttonText = "Stopwatch",
+                        painterResourceId = R.drawable.stopwatch_icon,
+                        onClickTextButton = {onStopwatchClick()}
+                    )
+                    NavigateTextButton(
+                        buttonText = "Weather",
+                        painterResourceId = R.drawable.weather_icon,
+                        onClickTextButton = {onWeatherAppClick()}
+                    )
+                    NavigateTextButton(
+                        buttonText = "News",
+                        painterResourceId = R.drawable.news_icon,
+                        onClickTextButton = {onNewsAppClick()}
+                    )
                     Spacer(modifier = Modifier.weight(1f))
-                    UniversalAppSettings()
+                    UniversalAppSettings(
+                        isDarkTheme = isDarkTheme.value,
+                        onDarkThemeChange = { viewModel.enableDarkTheme(it) }
+                    )
                 }
             }
         },
@@ -141,8 +152,15 @@ fun UniversalMainScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                Image(
+                    painter = painterResource(id = R.drawable.idea_generation),
+                    contentDescription = null
+                )
+                Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Some text"
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    text = "Welcome!"
                 )
             }
         }
@@ -150,11 +168,40 @@ fun UniversalMainScreen(
 }
 
 @Composable
-fun UniversalAppSettings(
-    viewModel: SettingsViewModel = hiltViewModel()
-) {
-    var isDarkTheme = viewModel.isDarkThemeState.collectAsState(false)
+fun NavigateTextButton(
+    buttonText: String,
+    painterResourceId: Int,
+    onClickTextButton: () -> Unit
+){
+    TextButton(
+        onClick = { onClickTextButton() },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RectangleShape
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(painterResourceId),
+                contentDescription = null
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                fontSize = 20.sp,
+                text = buttonText
+            )
+        }
+    }
+}
 
+@Composable
+fun UniversalAppSettings(
+    isDarkTheme: Boolean,
+    onDarkThemeChange: (Boolean) -> Unit
+) {
     Row(
         modifier = Modifier.padding(20.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -164,9 +211,9 @@ fun UniversalAppSettings(
             text = "Enable dark theme"
         )
         Switch(
-            checked = isDarkTheme.value,
+            checked = isDarkTheme,
             onCheckedChange = {
-                viewModel.enableDarkTheme(it)
+                onDarkThemeChange(it)
             }
         )
     }
