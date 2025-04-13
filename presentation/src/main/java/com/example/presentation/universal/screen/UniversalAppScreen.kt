@@ -85,7 +85,9 @@ fun UniversalMainScreen(
             ModalDrawerSheet(
                 modifier = Modifier.width(250.dp)
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.padding(top = 20.dp)
+                ) {
                     NavigateTextButton(
                         buttonText = "Stopwatch",
                         painterResourceId = R.drawable.stopwatch_icon,
