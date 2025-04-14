@@ -72,7 +72,7 @@ class NewsRepositoryImpl @Inject constructor(
                 text
             } catch (e: Exception) {
                 e.printStackTrace()
-                "Failed to load article"
+                ""
             }
         }
     }

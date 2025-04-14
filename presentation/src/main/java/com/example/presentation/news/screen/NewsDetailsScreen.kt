@@ -82,6 +82,7 @@ fun NewsDetailsContentScreen(
                 title = {},
                 actions = {
                     Row(
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(

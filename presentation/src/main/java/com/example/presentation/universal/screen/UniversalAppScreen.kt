@@ -2,7 +2,6 @@ package com.example.presentation.universal.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -91,17 +90,17 @@ fun UniversalMainScreen(
                     NavigateTextButton(
                         buttonText = "Stopwatch",
                         painterResourceId = R.drawable.stopwatch_icon,
-                        onClickTextButton = {onStopwatchClick()}
+                        onClickTextButton = { onStopwatchClick() }
                     )
                     NavigateTextButton(
                         buttonText = "Weather",
                         painterResourceId = R.drawable.weather_icon,
-                        onClickTextButton = {onWeatherAppClick()}
+                        onClickTextButton = { onWeatherAppClick() }
                     )
                     NavigateTextButton(
                         buttonText = "News",
                         painterResourceId = R.drawable.news_icon,
-                        onClickTextButton = {onNewsAppClick()}
+                        onClickTextButton = { onNewsAppClick() }
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     UniversalAppSettings(
@@ -114,38 +113,29 @@ fun UniversalMainScreen(
     ) {
         Scaffold(
             topBar = {
-                TopAppBar(
-                    modifier = Modifier,
+                CenterAlignedTopAppBar(
                     title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        drawerState.apply {
-                                            if (isClosed) open() else close()
-                                        }
+                        Text(
+                            text = "Universal app"
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
                                     }
-                                }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Menu,
-                                    contentDescription = "Localized description"
-                                )
-                            }
-                            Box(
-                                modifier = Modifier.weight(1f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "Universal app"
-                                )
-                            }
+                                }
+                            }) {
+                            Icon(
+                                imageVector = Icons.Filled.Menu,
+                                contentDescription = "Localized description"
+                            )
                         }
                     }
                 )
             }
-
         ) { contentPadding ->
             Column(
                 modifier = Modifier
@@ -174,7 +164,7 @@ fun NavigateTextButton(
     buttonText: String,
     painterResourceId: Int,
     onClickTextButton: () -> Unit
-){
+) {
     TextButton(
         onClick = { onClickTextButton() },
         modifier = Modifier.fillMaxWidth(),
